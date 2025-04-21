@@ -8,19 +8,33 @@ open import Relation.Binary.PropositionalEquality as Eq using (_≡_; refl)
 open import Data.Nat using (ℕ; _≤_; _<_; _≥_; _>_; _==_; compare; less; equal; greater)
 open import Data.Maybe using (Maybe; just; nothing)
 open import Relation.Nullary using (Dec; yes; no)
+open import Data.Product using (_×_; _,_)
+open import Data.Unit using (⊤; tt)
 
 
 data BST : Set where
   empty : BST
   node  : (left : BST) → (val : ℕ) → (right : BST) → BST
 
+
+All≤ : ℕ → BST → Set
+All≤ x empty = ⊤
+All≤ x (node l v r) = (v ≤ x) × All≤ x l × All≤ x r
+
+All≥ : ℕ → BST → Set
+All≥ x empty = ⊤
+All≥ x (node l v r) = (x ≤ v) × All≥ x l × All≥ x r
+
+
 data BSTValid : BST → Set where
   empty : BSTValid empty
---  node : ∀ (left : BST) (val : ℕ) (right : BST)
---         → (BSTValid left)
---         → (BSTValid right)
---         → (left ≤ val) → (val ≤ right)
---         → BSTValid (node left val right)
+  validNode :
+    ∀ (left : BST) (val : ℕ) (right : BST)
+    → BSTValid left
+    → BSTValid right
+    → All≤ val left
+    → All≥ val right
+    → BSTValid (node left val right)
 
 lookup : ℕ → BST → Bool
 lookup x empty = false
