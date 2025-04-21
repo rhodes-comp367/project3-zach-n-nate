@@ -1,2 +1,46 @@
 --This is our project file
 --This file is used to define the project and its dependencies
+open import Agda.Builtin.Equality
+open import Agda.Builtin.Nat
+open import Agda.Builtin.Bool
+open import Agda.Builtin.Unit
+open import Relation.Binary.PropositionalEquality as Eq using (_≡_; refl)
+open import Data.Nat using (ℕ; _≤_; _<_; _≥_; _>_; _==_; compare; less; equal; greater)
+open import Data.Maybe using (Maybe; just; nothing)
+open import Relation.Nullary using (Dec; yes; no)
+
+
+data BST : Set where
+  empty : BST
+  node  : (left : BST) → (val : ℕ) → (right : BST) → BST
+
+data BSTValid : BST → Set where
+  empty : BSTValid empty
+--  node : ∀ (left : BST) (val : ℕ) (right : BST)
+--         → (BSTValid left)
+--         → (BSTValid right)
+--         → (left ≤ val) → (val ≤ right)
+--         → BSTValid (node left val right)
+
+lookup : ℕ → BST → Bool
+lookup x empty = false
+lookup x (node left val right) with compare x val
+... | less _ _   = lookup x left
+... | equal _   = true
+... | greater _ _ = lookup x right
+
+
+insert : ℕ → BST → BST
+insert x empty = node empty x empty
+insert x (node left val right) with compare x val
+... | less _ _    = node (insert x left) val right
+... | equal _ = node left val right
+... | greater _ _ = node left val (insert x right)
+
+
+exampleTree : BST
+exampleTree = insert 5 (insert 3 (insert 7 empty))
+
+exampleSearch : Bool
+exampleSearch = lookup 3 exampleTree  -- should return true
+
