@@ -54,9 +54,17 @@ insert x (node left val right) with compare x val
 ... | equal _ = node left val right
 ... | greater _ _ = node left val (insert x right)
 
---lookup-insert : lookup n t (insert n t) ≡ true
---lookup-insert = ?
-
+lookup-insert : (n : ℕ) → (t : BST) → lookup n (insert n t) ≡ true
+lookup-insert zero t = {!   !}
+lookup-insert (suc n) t = {!   !}
+{-
+lookup-insert : (n : ℕ) → (t : BST) → lookup n (insert n t) ≡ true
+lookup-insert n empty = refl
+lookup-insert n (node l v r) with compare n v
+... | less _ _ = lookup-insert n l
+... | equal _ = refl
+... | greater _ _ = lookup-insert n r
+-}
 exampleTree : BST
 exampleTree = insert 5 (insert 3 (insert 7 empty))
 
